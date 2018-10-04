@@ -1,6 +1,8 @@
 <script src="tinytest.js"></script>
 <script>
 
+//Example of forEach functionality, tested in the same order below:
+
 // Example 1:
 // forEach([1, 2, 3], function () {
 //   console.log('hi);')
@@ -11,24 +13,44 @@
 //  console.log(number);
 // });
 
-function forEach(array, callback){
+//Example 3:
+// forEach([1, 2, 3], function(number))
+//  console.log(number);
+// });
+
+//Example 4:
+// forEach([1, 2, 3], function(number))
+//  console.log(number);
+// });
+
+function forEach(array, callback) {
   for (i = 0; i < array.length; i++)
-    callback(array[i]);
+    callback(array[i], i, array);
 }
 
 tests({
   'It should run the callback function array.length times': function() {
     var counter = 0;
-    var myArray = [1, 2, 3];
-    forEach(myArray, function(myArg) {
+    forEach([1, 2, 3], function(myArg) {
       counter++
-    })
-    eq(myArray.length, counter);
+    });
+    eq(counter, 3);
   },
   'It should pass in the ith element as the first argument to the callback': function() {
-    forEach([1], function(myArg){
-      eq(1, myArg);
-    })
+    forEach([1], function(number){
+      eq(number, 1);
+    });
+  },
+  'It should pass in the ith position as the second argument to the callback': function() {
+    forEach([1], function(number, index, array) {
+      eq(index, 0);
+    });
+  },
+  'It should pass the original array as the third argument to the callback': function() {
+    var array = [1, 2, 3];
+    forEach(array, function(number, index, originalArray){
+      eq(originalArray, array);
+    });
   },
 });
 </script>
