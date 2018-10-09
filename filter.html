@@ -2,13 +2,17 @@
 <script>
 
 function filter (array, callback, optionalThisObject) {
-	var forEachCallback = callback;
+  var filteredArray = [];
+  var forEachCallback = callback;
 	if (optionalThisObject) {
 		forEachCallback = callback.bind(optionalThisObject);
 	}
 	for (i = 0; i < array.length; i++) {
-		forEachCallback(array[i], i, array);
+    if (forEachCallback(array[i], i, array)) {
+      filteredArray.push(array[i]);
+    }
 	}
+  return filteredArray;
 }
 
 tests ({
@@ -41,9 +45,21 @@ tests ({
     }, {description: 'You should see me inside the callback'});
   },
 
-  '': function() {
-    fail();
+  'It should return an array': function() {
+    filteredArray = filter ([], function() {});
+    eq(Array.isArray(filteredArray), true);
+  },
+  'It should return a different array from the one being filtered': function() {
+    originalArray = [];
+    filteredArray = filter(originalArray, function () {});
+    eq(originalArray !== filteredArray, true);
+  },
+  'It should return a new array that only has elements where callback returns true': function() {
+     filteredArray = filter ([1,2], function(number){
+       return number > 1;
+     });
+     eq(filteredArray.length, 1);
+     eq(filteredArray[0], 2)
   }
-
-})
+});
 </script>
