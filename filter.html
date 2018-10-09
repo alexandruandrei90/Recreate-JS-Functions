@@ -1,13 +1,49 @@
 <script src="tinytest.js"></script>
 <script>
 
-function filter () {
-  //insert code
+function filter (array, callback, optionalThisObject) {
+	var forEachCallback = callback;
+	if (optionalThisObject) {
+		forEachCallback = callback.bind(optionalThisObject);
+	}
+	for (i = 0; i < array.length; i++) {
+		forEachCallback(array[i], i, array);
+	}
 }
 
 tests ({
+  'It should run the callback function array.length times': function() {
+    var howManyTimesCallbackRan = 0;
+    filter([1, 2, 3], function(myArg) {
+      howManyTimesCallbackRan++;
+    });
+    eq(howManyTimesCallbackRan, 3);
+  },
+  'It should pass in the ith element as the first argument to the callback': function() {
+    filter([1], function(number){
+      eq(number, 1);
+    });
+  },
+  'It should pass in the ith position as the second argument to the callback': function() {
+    filter([1], function(number, index) {
+      eq(index, 0);
+    });
+  },
+  'It should pass the original array as the third argument to the callback': function() {
+    var array = [1, 2, 3];
+    filter(array, function(number, index, originalArray){
+      eq(originalArray, array);
+    });
+  },
+  'It should accept an optional this object': function() {
+    filter([1], function() {
+      eq(this.description, 'You should see me inside the callback');
+    }, {description: 'You should see me inside the callback'});
+  },
+
   '': function() {
     fail();
   }
+
 })
 </script>
