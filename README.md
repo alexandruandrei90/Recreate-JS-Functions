@@ -1,2 +1,3 @@
-# recreate-forEach
-A playground to create forEach from scratch and learn testing.
+# Recreate-JS-Functions
+
+A playground to create forEach, filter, map and reduce from scratch in order to learn testing and sane git practices.
