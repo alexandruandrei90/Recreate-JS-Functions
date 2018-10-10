@@ -2,10 +2,85 @@
 
 <script>
 
-tests ({
-  '': function(){
+function map (originalArray, callback, optionalThisObject) {
+  var mapCallback = callback;
 
+  if (optionalThisObject) {
+    mapCallback = callback.bind(optionalThisObject);
   }
+
+  var mappedArray = [];
+
+  for (var i = 0; i < originalArray.length; i++) {
+    if (i in originalArray) {
+      mappedArray[i] = mapCallback(originalArray[i], i, originalArray);
+    }
+  }
+
+  return mappedArray;
+}
+
+tests ({
+
+  'It should run the callback function array.length times': function() {
+    var howManyTimesCallbackRan = 0;
+    map([1, 2, 3], function() {
+      howManyTimesCallbackRan++;
+    });
+    eq(howManyTimesCallbackRan, 3);
+  },
+  'It should pass in the ith element as the first argument to the callback': function() {
+    map([1], function(number){
+      eq(number, 1);
+    });
+  },
+  'It should pass in the ith position as the second argument to the callback': function() {
+    map([1], function(number, index) {
+      eq(index, 0);
+    });
+  },
+  'It should pass the original array as the third argument to the callback': function() {
+    var array = [1, 2, 3];
+    map(array, function(number, index, originalArray){
+      eq(originalArray, array);
+    });
+  },
+  'It should accept an optional this object': function() {
+    map([1], function() {
+      eq(this.description, 'You should see me inside the callback');
+    }, {description: 'You should see me inside the callback'});
+  },
+
+  'It should return an array': function() {
+    var mappedArray = map ([], function() {});
+    eq(Array.isArray(mappedArray), true);
+  },
+  'It should return a different array from the original array': function() {
+    var originalArray = [];
+    mappedArray = map(originalArray, function () {});
+    eq(originalArray !== mappedArray, true);
+  },
+  'It should return a mapped array': function() {
+    var mappedArray = map([1], function(number) {
+      return number * 2;
+    });
+    eq(mappedArray[0], 2);
+  },
+  'It should skip unassigned indexes': function() {
+    var weirdArray = [, 1];
+    var mappedArray = map(weirdArray, function (number) {
+      return number * 2;
+    });
+    eq(0 in mappedArray, false);
+    eq(mappedArray[1], 2)
+  }
+//'The original aray and the new array should have the same length': function () {
+  //
+//}
+//
+//
+//
+//
 });
 
 </script>
